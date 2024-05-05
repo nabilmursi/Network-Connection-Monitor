@@ -12,7 +12,12 @@ def get_connected_ips():
         if 'ESTABLISHED' in line and ':' in line:
             parts = line.split()
             ip_port = parts[4]
-            ip, port = ip_port.split(':')
+            # Handle IPv4 and IPv6 addresses
+            if ']' in ip_port:  # This is likely an IPv6 address
+                ip, port = ip_port.split(']:')
+                ip = ip[1:]  # Remove the leading '[' from IPv6 address
+            else:
+                ip, port = ip_port.rsplit(':', 1)  # Split on the last colon
             if ip != "127.0.0.1":
                 connections.append((ip, port))
     return connections
